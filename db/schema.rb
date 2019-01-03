@@ -10,9 +10,35 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 0) do
+ActiveRecord::Schema.define(version: 2019_01_02_155937) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "lots", force: :cascade do |t|
+    t.integer "site_id"
+    t.integer "programme_id"
+    t.string "lot_source_id"
+    t.string "programme_source_id"
+    t.string "terrasse_text"
+    t.string "parking_text"
+    t.string "images"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "programmes", force: :cascade do |t|
+    t.string "programme_name"
+    t.string "images"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "source_id"
+    t.integer "site_id"
+  end
+
+  create_table "sites", force: :cascade do |t|
+    t.string "site_name", null: false
+    t.string "url", null: false
+  end
 
 end

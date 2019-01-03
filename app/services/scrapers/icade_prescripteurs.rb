@@ -1,6 +1,6 @@
 class Scrapers::IcadePrescripteurs < Scrapers::BaseScraper
   def initialize
-    @programme_ids = []
+    @programme_ids = {}
   end
 
   def url
@@ -17,6 +17,7 @@ class Scrapers::IcadePrescripteurs < Scrapers::BaseScraper
 
     puts "get lots"
     lots_page = session.get("#{url}/pdm/offre/recherche/lots")
+
     i = 1
     while true
       puts "get lot links for page #{i}"
@@ -30,12 +31,12 @@ class Scrapers::IcadePrescripteurs < Scrapers::BaseScraper
         process_lot(session, lot_link)
 
         # test
-        break
+        # break
         # -----------
       end
 
       # test
-      break
+      # break
       # -----------
 
       i += 1
@@ -55,18 +56,31 @@ class Scrapers::IcadePrescripteurs < Scrapers::BaseScraper
     programme_id = arr[1].split('/').first
     lot_id = arr.last
 
-    unless @programme_ids.include? programme_id
-      @programme_ids << programme_id
-      process_programme(session, programme_id)
+    unless @programme_ids.keys.include? programme_id
+      programme = process_programme(session, programme_id)
+      @programme_ids[programme_id] = programme
     end
+    programme = @programme_ids[programme_id]
 
     body = session.get(link).body
     html_doc = Nokogiri::HTML(body)
     list = html_doc.xpath("//ul[@class='annexes']/li")
-    terrasse_text = list[1].text.split(':')[1].strip
-    parking_text = list[2].text.split(':')[1].strip
+    terrasse_text = list[1].text.split(':')[1].strip rescue nil
+    parking_text = list[2].text.split(':')[1].strip rescue nil
     puts "Terrasse: #{terrasse_text}"
     puts "Parking: #{parking_text}"
+
+    # save / update lot
+    lot = Lot.where(
+      site_id: site.id,
+      programme_id: programme.id,
+      lot_source_id: lot_id,
+      programme_source_id: programme_id
+    ).first_or_create
+    lot.terrasse_text = terrasse_text
+    lot.parking_text = parking_text
+    lot.images = programme.images
+    lot.save
 
     puts "---------------"
   end
@@ -79,6 +93,14 @@ class Scrapers::IcadePrescripteurs < Scrapers::BaseScraper
     html_doc = Nokogiri::HTML(body)
     images = html_doc.css("#myGallery").css('a[href]').map {|e| e['href']}
     puts "Images: #{images.join(';')}"
+
+    # insert / update programme
+    programme = Programme.where(
+      source_id: programme_id, site_id: site.id
+    ).first_or_create
+    programme.images = images.join(';')
+    programme.save
+    programme
   end
 
   def get_lot_links_for_page(session, n)
@@ -97,5 +119,9 @@ class Scrapers::IcadePrescripteurs < Scrapers::BaseScraper
 
     puts page.title
     puts page.search('#btLot').text
+  end
+
+  def site
+    @site ||= Site.find_by(site_name: 'icade-prescripteurs')
   end
 end

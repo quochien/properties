@@ -87,7 +87,7 @@ class Scrapers::IcadePrescripteurs < Scrapers::BaseScraper
 
   def process_programme(session, programme_id)
     # http://www.icade-prescripteurs.com/pdm/offre/programme,62291/visuels?width=870&height=580&start=0
-    images_url = "#{url}/pdm/offre/programme,62291/visuels?width=870&height=580&start=0"
+    images_url = "#{url}/pdm/offre/programme,#{programme_id}/visuels?width=870&height=580&start=0"
     puts "process #{images_url}"
     body = session.get(images_url).body
     html_doc = Nokogiri::HTML(body)

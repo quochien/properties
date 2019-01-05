@@ -1,8 +1,17 @@
 <tr>
-  <td><%= lot.programme_source_id %></td>
-  <td><%= lot.lot_source_id %></td>
+  <td><%= lot.id %></td>
+  <td>
+    <%= lot.lot_name&.html_safe %><br/>
+    <%= lot.full_desc&.html_safe %>
+  </td>
   <td><%= lot.terrasse_text %></td>
   <td><%= lot.parking_text %></td>
+  <td><%= lot.city_text %></td>
+  <td><%= lot.expected_delivery %></td>
+  <td><%= lot.expected_actability %></td>
+  <td><%= lot.price_text %></td>
+  <td><%= lot.notary_fee %></td>
+  <td><%= lot.security_deposit %></td>
   <td>
     <% lot.images.split(';').each_with_index do |image, i| %>
       <a href="<%= image %>" target="_blank">Image <%= i+1 %></a>

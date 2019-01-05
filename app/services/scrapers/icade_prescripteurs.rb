@@ -1,6 +1,7 @@
 class Scrapers::IcadePrescripteurs < Scrapers::BaseScraper
   def initialize
     @programme_ids = {}
+    @lots_count = 0
   end
 
   def url
@@ -20,37 +21,73 @@ class Scrapers::IcadePrescripteurs < Scrapers::BaseScraper
 
     i = 1
     while true
-      puts "get lot links for page #{i}"
-
-      lot_links = get_lot_links_for_page(session, i)
-      break if lot_links.blank?
-
-      # print lot_links
-      lot_links.each do |link|
-        lot_link = "#{url}#{link}"
-        process_lot(session, lot_link)
-
-        # test
-        # break
-        # -----------
-      end
-
-      # test
-      # break
-      # -----------
-
+      result = process_page(session, i)
+      break if result == false
       i += 1
     end
+
+    puts "Processed: #{@lots_count} lots"
 
     true
   end
 
   private
 
-  def process_lot(session, link)
-    puts "---------------"
-    puts "process #{link}"
+  def process_page(session, n)
+    puts "processing page #{n}"
+    body = session.get("#{url}/pdm/offre/recherche/affiner?origin=page&page=#{n}").body
 
+    html_doc = Nokogiri::HTML(body)
+    lot_links = html_doc.xpath("//td[@class='desc bl0']/p/a/@href").map(&:value)
+    return false if lot_links.size == 0
+
+    rows = html_doc.xpath('//table/tbody/tr')
+    rows.drop(1).collect do |row|
+      lot_link = row.at_xpath("td[2]/p[1]/a[1]/@href")
+      next if lot_link == nil
+
+      lot_link = "#{url}#{lot_link}"
+      puts "lot_link: #{lot_link}"
+
+      lot_name = row.at_xpath("td[2]/p[1]/a[1]/text()")
+      puts "lot_name: #{lot_name}"
+
+      lot_full_desc = row.at_xpath("td[2]/p[2]").inner_html
+      puts "full_desc: #{lot_full_desc}"
+
+      city = row.at_xpath("td[3]/p[1]").inner_html.sub('<br>', ' ')
+      puts "city: #{city}"
+
+      expected_delivery = row.at_xpath("td[4]/p[1]").inner_html.sub('<br>', '').strip
+      puts "expected_delivery: #{expected_delivery}"
+
+      expected_actability = row.at_xpath("td[5]/p[1]").inner_html.sub('<br>', '').strip
+      puts "expected_actability: #{expected_actability}"
+
+      price_text = row.at_xpath("td[6]").inner_text.squish #.sub('<br>', '').strip
+      puts "price_text: #{price_text}"
+
+      lot = process_lot(session, lot_link)
+      lot.lot_name = lot_name
+      lot.full_desc = lot_full_desc
+      lot.city_text = city
+      lot.expected_delivery = expected_delivery
+      lot.expected_actability = expected_actability
+      lot.price_text = price_text
+      lot.save
+
+      @lots_count += 1
+
+      puts "-------------------------------------------"
+      # break
+    end
+
+    puts "*********************************"
+
+    true
+  end
+
+  def process_lot(session, link)
     # http://www.icade-prescripteurs.com/pdm/offre/programme,62291/pdmlot,44
     arr = link.split(',')
     programme_id = arr[1].split('/').first
@@ -64,11 +101,18 @@ class Scrapers::IcadePrescripteurs < Scrapers::BaseScraper
 
     body = session.get(link).body
     html_doc = Nokogiri::HTML(body)
+
     list = html_doc.xpath("//ul[@class='annexes']/li")
     terrasse_text = list[1].text.split(':')[1].strip rescue nil
     parking_text = list[2].text.split(':')[1].strip rescue nil
     puts "Terrasse: #{terrasse_text}"
     puts "Parking: #{parking_text}"
+
+    list = html_doc.xpath("//span[@class='montant']")
+    notary_fee = list[0].text rescue nil
+    security_deposit = list[1].text rescue nil
+    puts "notary_fee: #{notary_fee}"
+    puts "security_deposit: #{security_deposit}"
 
     # save / update lot
     lot = Lot.where(
@@ -80,9 +124,10 @@ class Scrapers::IcadePrescripteurs < Scrapers::BaseScraper
     lot.terrasse_text = terrasse_text
     lot.parking_text = parking_text
     lot.images = programme.images
-    lot.save
-
-    puts "---------------"
+    lot.notary_fee = notary_fee
+    lot.security_deposit = security_deposit
+    # lot.save
+    lot
   end
 
   def process_programme(session, programme_id)

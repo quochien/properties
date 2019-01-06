@@ -4,12 +4,12 @@ class Scrapers::IcadePrescripteurs < Scrapers::BaseScraper
     @lots_count = 0
   end
 
-  def url
-    'http://www.icade-prescripteurs.com'
+  def site_name
+    'icade-prescripteurs'
   end
 
   def perform
-    puts "start scraping #{url}"
+    puts "start scraping #{site.url}"
     session = Mechanize.new
 
     puts "login"
@@ -17,7 +17,7 @@ class Scrapers::IcadePrescripteurs < Scrapers::BaseScraper
     login(home_page)
 
     puts "get lots"
-    lots_page = session.get("#{url}/pdm/offre/recherche/lots")
+    lots_page = session.get("#{site.url}/pdm/offre/recherche/lots")
 
     i = 1
     while true
@@ -35,7 +35,7 @@ class Scrapers::IcadePrescripteurs < Scrapers::BaseScraper
 
   def process_page(session, n)
     puts "processing page #{n}"
-    body = session.get("#{url}/pdm/offre/recherche/affiner?origin=page&page=#{n}").body
+    body = session.get("#{site.url}/pdm/offre/recherche/affiner?origin=page&page=#{n}").body
 
     html_doc = Nokogiri::HTML(body)
     lot_links = html_doc.xpath("//td[@class='desc bl0']/p/a/@href").map(&:value)
@@ -46,7 +46,7 @@ class Scrapers::IcadePrescripteurs < Scrapers::BaseScraper
       lot_link = row.at_xpath("td[2]/p[1]/a[1]/@href")
       next if lot_link == nil
 
-      lot_link = "#{url}#{lot_link}"
+      lot_link = "#{site.url}#{lot_link}"
       puts "lot_link: #{lot_link}"
 
       lot_name = row.at_xpath("td[2]/p[1]/a[1]/text()")
@@ -132,7 +132,7 @@ class Scrapers::IcadePrescripteurs < Scrapers::BaseScraper
 
   def process_programme(session, programme_id)
     # http://www.icade-prescripteurs.com/pdm/offre/programme,62291/visuels?width=870&height=580&start=0
-    images_url = "#{url}/pdm/offre/programme,#{programme_id}/visuels?width=870&height=580&start=0"
+    images_url = "#{site.url}/pdm/offre/programme,#{programme_id}/visuels?width=870&height=580&start=0"
     puts "process #{images_url}"
     body = session.get(images_url).body
     html_doc = Nokogiri::HTML(body)
@@ -149,7 +149,7 @@ class Scrapers::IcadePrescripteurs < Scrapers::BaseScraper
   end
 
   def get_lot_links_for_page(session, n)
-    body = session.get("#{url}/pdm/offre/recherche/affiner?origin=page&page=#{n}").body
+    body = session.get("#{site.url}/pdm/offre/recherche/affiner?origin=page&page=#{n}").body
 
     html_doc = Nokogiri::HTML(body)
     list = html_doc.xpath("//td[@class='desc bl0']/p/a/@href")

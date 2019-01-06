@@ -5,4 +5,14 @@
 #
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
 #   Character.create(name: 'Luke', movie: movies.first)
-Site.where(site_name: 'icade-prescripteurs', url: 'http://www.icade-prescripteurs.com').first_or_create
+sites = [
+  {
+    site_name: 'icade-prescripteurs', url: 'http://www.icade-prescripteurs.com'
+  },
+  {
+    site_name: 'valorissimo', url: 'https://www.valorissimo.com'
+  }
+]
+sites.each do |site|
+  Site.where(site_name: site[:site_name], url: site[:url]).first_or_create
+end

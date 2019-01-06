@@ -41,6 +41,7 @@ gem 'bootstrap-sass', '~> 3.3', '>= 3.3.7'
 gem 'font-awesome-rails', '~> 4.6', '>= 4.6.3.1'
 gem 'jquery-rails'
 gem 'jquery-datatables-rails', '~> 3.4.0'
+gem 'ajax-datatables-rails'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console

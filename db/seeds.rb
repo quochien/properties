@@ -13,7 +13,7 @@ sites = [
   },
   {
     site_name: 'valorissimo',
-    url: 'https://www.valorissimo.com'
+    url: 'https://www.valorissimo.com',
     logo: ''
   }
 ]

@@ -12,12 +12,17 @@ sites = [
     logo: 'logo_icade.png'
   },
   {
-    site_name: 'valorissimo', url: 'https://www.valorissimo.com'
+    site_name: 'valorissimo',
+    url: 'https://www.valorissimo.com'
+    logo: ''
   }
 ]
 sites.each do |record|
-  site = Site.where(site_name: record[:site_name]).first_or_create
-  site.url = record[:url]
-  site.logo = record[:logo]
-  site.save
+  if site = Site.find_by(site_name: record[:site_name])
+    site.url = record[:logo]
+    site.logo = record[:logo]
+    site.save
+  else
+    Site.create(record)
+  end
 end

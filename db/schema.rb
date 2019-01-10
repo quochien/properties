@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_01_05_082304) do
+ActiveRecord::Schema.define(version: 2019_01_10_022514) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -33,6 +33,16 @@ ActiveRecord::Schema.define(version: 2019_01_05_082304) do
     t.string "expected_delivery"
     t.string "expected_actability"
     t.string "price_text"
+    t.string "ville"
+    t.string "postal_code"
+    t.string "department"
+    t.integer "price"
+    t.string "disponibilite"
+    t.string "lot_type"
+    t.string "superficie"
+    t.integer "etage"
+    t.string "zone"
+    t.string "fiscalite"
   end
 
   create_table "programmes", force: :cascade do |t|
@@ -47,6 +57,7 @@ ActiveRecord::Schema.define(version: 2019_01_05_082304) do
   create_table "sites", force: :cascade do |t|
     t.string "site_name", null: false
     t.string "url", null: false
+    t.string "logo"
   end
 
 end

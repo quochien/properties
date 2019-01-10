@@ -6,6 +6,7 @@ jQuery(document).ready(function() {
     "pagingType": "full_numbers",
     "columns": [
       {"data": "id"},
+      {"data": "logo", "orderable": false, "searchable": false},
       {"data": "lot_name"},
       {"data": "terrasse_text"},
       {"data": "parking_text"},

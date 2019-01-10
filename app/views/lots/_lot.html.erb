@@ -1,5 +1,6 @@
 <tr>
   <td><%= lot.id %></td>
+  <td><%= image_tag lot.site.logo, width: 100, height: 70 %></td>
   <td>
     <%= lot.lot_name&.html_safe %><br/>
     <%= lot.full_desc&.html_safe %>

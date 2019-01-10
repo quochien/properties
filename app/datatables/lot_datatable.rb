@@ -16,9 +16,10 @@ class LotDatatable < BaseDatatable
   end
 
   def data
-    records.map do |lot|
+    records.includes(:site).map do |lot|
       {
         id: lot.id,
+        logo: image_tag(lot.site.logo, width: 80, height: 60).html_safe,
         lot_name: "#{lot.lot_name}<br/>#{lot.full_desc}".html_safe,
         terrasse_text: lot.terrasse_text,
         parking_text: lot.parking_text,

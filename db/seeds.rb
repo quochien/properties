@@ -7,12 +7,17 @@
 #   Character.create(name: 'Luke', movie: movies.first)
 sites = [
   {
-    site_name: 'icade-prescripteurs', url: 'http://www.icade-prescripteurs.com'
+    site_name: 'icade-prescripteurs',
+    url: 'http://www.icade-prescripteurs.com',
+    logo: 'logo_icade.png'
   },
   {
     site_name: 'valorissimo', url: 'https://www.valorissimo.com'
   }
 ]
-sites.each do |site|
-  Site.where(site_name: site[:site_name], url: site[:url]).first_or_create
+sites.each do |record|
+  site = Site.where(site_name: record[:site_name]).first_or_create
+  site.url = record[:url]
+  site.logo = record[:logo]
+  site.save
 end

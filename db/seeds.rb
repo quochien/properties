@@ -19,7 +19,7 @@ sites = [
 ]
 sites.each do |record|
   if site = Site.find_by(site_name: record[:site_name])
-    site.url = record[:logo]
+    site.url = record[:url]
     site.logo = record[:logo]
     site.save
   else

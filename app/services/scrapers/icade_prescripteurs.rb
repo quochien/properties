@@ -13,7 +13,7 @@ class Scrapers::IcadePrescripteurs < Scrapers::BaseScraper
     session = Mechanize.new
 
     puts "login"
-    home_page = session.get(url)
+    home_page = session.get(site.url)
     login(home_page)
 
     puts "get lots"
@@ -49,11 +49,18 @@ class Scrapers::IcadePrescripteurs < Scrapers::BaseScraper
       lot_link = "#{site.url}#{lot_link}"
       puts "lot_link: #{lot_link}"
 
-      lot_name = row.at_xpath("td[2]/p[1]/a[1]/text()")
+      lot_name = row.at_xpath("td[2]/p[1]/a[1]").inner_text
       puts "lot_name: #{lot_name}"
 
       lot_full_desc = row.at_xpath("td[2]/p[2]").inner_html
       puts "full_desc: #{lot_full_desc}"
+
+      zone = row.at_xpath("td[2]/table[1]/tr[1]/td[1]").inner_text
+      puts "zone: #{zone}"
+
+      # fiscalite = row.at_xpath("td[2]/table[1]/tr[1]/td[2]").inner_text
+      fiscalite = row.at_xpath("td[2]/table[1]/tr[1]/td[2]/text()")
+      puts "fiscalite: #{fiscalite}"
 
       city = row.at_xpath("td[3]/p[1]").inner_html.sub('<br>', ' ')
       puts "city: #{city}"
@@ -68,12 +75,32 @@ class Scrapers::IcadePrescripteurs < Scrapers::BaseScraper
       puts "price_text: #{price_text}"
 
       lot = process_lot(session, lot_link)
+
       lot.lot_name = lot_name
+      lot.reference = lot_name.split(' ').last
+      first_word = lot_name.split(' ').first
+      lot_name =~ /#{first_word}(.*?)n°/
+      lot.lot_type = $1.strip
+
       lot.full_desc = lot_full_desc
+      lot.size = lot_full_desc.split(' ').first.to_f
+      lot.etage = lot_full_desc.split(' ')[3]
+
       lot.city_text = city
+      lot.ville = city.split('(')[0].strip
+      lot.postal_code = city.split('(')[1].delete(')').strip
+      lot.department = lot.postal_code.first(2)
+
+      lot.zone = zone
+      lot.fiscalite = fiscalite
       lot.expected_delivery = expected_delivery
       lot.expected_actability = expected_actability
-      lot.price_text = price_text
+
+      price_text =~ /(.*?)€(.*?)(\(.*?\))/
+      lot.price = $1.delete(" ").to_i
+      lot.price_text = "#{$1}#{$3}"
+      lot.disponibilite = $2.strip
+
       lot.save
 
       @lots_count += 1
@@ -84,6 +111,7 @@ class Scrapers::IcadePrescripteurs < Scrapers::BaseScraper
 
     puts "*********************************"
 
+    #false
     true
   end
 
@@ -166,7 +194,7 @@ class Scrapers::IcadePrescripteurs < Scrapers::BaseScraper
     puts page.search('#btLot').text
   end
 
-  def site
-    @site ||= Site.find_by(site_name: 'icade-prescripteurs')
-  end
+  # def site
+  #   @site ||= Site.find_by(site_name: 'icade-prescripteurs')
+  # end
 end

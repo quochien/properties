@@ -21,6 +21,7 @@ class LotDatatable < BaseDatatable
       notary_fee: { source: "Lot.notary_fee" },
       security_deposit: { source: "Lot.security_deposit" },
       images: { source: "Lot.images" },
+      actions: {},
     }
   end
 
@@ -46,8 +47,8 @@ class LotDatatable < BaseDatatable
         disponibilite: lot.disponibilite,
         notary_fee: lot.notary_fee,
         security_deposit: lot.security_deposit,
-        images: lot.images,
-        # images: dispay_images(lot.images),
+        images: display_images(lot),
+        actions: "",
       }
     end
   end
@@ -58,10 +59,10 @@ class LotDatatable < BaseDatatable
 
   private
 
-  def dispay_images(images)
+  def display_images(lot)
     html_images = []
-    images.split(';').each_with_index do |image, i|
-      html_images << "<a href=\"#{image}\" target=\"_blank\">Image_#{i+1}</a>"
+    lot.images.split(';').each_with_index do |image, i|
+      html_images << "<a style=\"visibility:hidden;\" href=\"#{image}\" data-lightbox=\"lot#{lot.id}\">Image_#{i+1}</a>"
     end
     html_images.join(" ").html_safe
   end

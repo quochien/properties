@@ -40,13 +40,14 @@ class LotDatatable < BaseDatatable
         ville: lot.ville,
         postal_code: lot.postal_code,
         department: lot.department,
-        expected_delivery: lot.expected_delivery,
+        expected_delivery: lot.expected_delivery&.html_safe,
         expected_actability: lot.expected_actability&.html_safe,
         price: "#{lot.price_text}",
         disponibilite: lot.disponibilite,
         notary_fee: lot.notary_fee,
         security_deposit: lot.security_deposit,
-        images: dispay_images(lot.images),
+        images: lot.images,
+        # images: dispay_images(lot.images),
       }
     end
   end

@@ -1,5 +1,5 @@
 jQuery(document).ready(function() {
-  $('#lots-datatable').dataTable({
+  var lotsTable = $('#lots-datatable').DataTable({
     "processing": true,
     "serverSide": true,
     "ajax": $('#lots-datatable').data('source'),
@@ -24,7 +24,13 @@ jQuery(document).ready(function() {
       {"data": "disponibilite"},
       {"data": "notary_fee"},
       {"data": "security_deposit"},
-      {"data": "images", "orderable": false, "searchable": false},
+      {"data": "images", visible: false, "orderable": false, "searchable": false},
     ]
+  });
+
+  $('#lots-datatable tbody').on('click', 'tr', function() {
+    var data = lotsTable.row(this).data();
+    // alert('You clicked on ' + data.id + ' row');
+    console.log(data.images);
   });
 });

@@ -20,6 +20,7 @@ jQuery(document).ready(function() {
       {"data": "ville"},
       {"data": "postal_code"},
       {"data": "department"},
+      {"data": "region"},
       {"data": "expected_delivery"},
       {"data": "expected_actability"},
       {"data": "price"},

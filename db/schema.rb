@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_01_10_142855) do
+ActiveRecord::Schema.define(version: 2019_01_12_064652) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -45,6 +45,7 @@ ActiveRecord::Schema.define(version: 2019_01_10_142855) do
     t.string "fiscalite"
     t.string "reference"
     t.float "size"
+    t.string "region"
   end
 
   create_table "programmes", force: :cascade do |t|

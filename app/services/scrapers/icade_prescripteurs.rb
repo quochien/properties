@@ -90,6 +90,7 @@ class Scrapers::IcadePrescripteurs < Scrapers::BaseScraper
       lot.ville = city.split('(')[0].strip
       lot.postal_code = city.split('(')[1].delete(')').strip
       lot.department = lot.postal_code.first(2)
+      lot.region = region_for(department)
 
       lot.zone = zone
       lot.fiscalite = fiscalite

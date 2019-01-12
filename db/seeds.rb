@@ -15,6 +15,11 @@ sites = [
     site_name: 'valorissimo',
     url: 'https://www.valorissimo.com',
     logo: ''
+  },
+  {
+    site_name: 'cogedim',
+    url: 'https://altareacogedim-partenaires.com',
+    logo: 'logo_cogedim.jpg'
   }
 ]
 sites.each do |record|

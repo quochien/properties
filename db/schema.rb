@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_01_12_064652) do
+ActiveRecord::Schema.define(version: 2019_01_16_011530) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -46,6 +46,14 @@ ActiveRecord::Schema.define(version: 2019_01_12_064652) do
     t.string "reference"
     t.float "size"
     t.string "region"
+    t.string "market_rental"
+    t.string "rentabilite"
+    t.string "pinel_rental"
+    t.string "pinel_rentabilite"
+    t.string "price_without_vat_exclude_furniture"
+    t.string "loyer_ht"
+    t.string "price_of_furniture_exclude_vat"
+    t.string "total_price_exclude_vat"
   end
 
   create_table "programmes", force: :cascade do |t|

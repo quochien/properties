@@ -37,7 +37,7 @@ class LotDatatable < BaseDatatable
         etage: lot.etage == 1 ? "1 er" : "#{lot.etage} ème",
         zone: lot.zone,
         fiscalite: lot.fiscalite,
-        terrasse_text: lot.terrasse_text,
+        terrasse_text: lot.terrasse_text&.html_safe,
         parking_text: lot.parking_text,
         ville: lot.ville,
         postal_code: lot.postal_code,

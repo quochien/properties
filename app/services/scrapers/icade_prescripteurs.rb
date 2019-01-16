@@ -90,7 +90,7 @@ class Scrapers::IcadePrescripteurs < Scrapers::BaseScraper
       lot.ville = city.split('(')[0].strip
       lot.postal_code = city.split('(')[1].delete(')').strip
       lot.department = lot.postal_code.first(2)
-      lot.region = region_for(department)
+      lot.region = region_for(lot.department)
 
       lot.zone = zone
       lot.fiscalite = fiscalite
@@ -194,8 +194,4 @@ class Scrapers::IcadePrescripteurs < Scrapers::BaseScraper
     puts page.title
     puts page.search('#btLot').text
   end
-
-  # def site
-  #   @site ||= Site.find_by(site_name: 'icade-prescripteurs')
-  # end
 end

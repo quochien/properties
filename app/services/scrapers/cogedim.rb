@@ -160,6 +160,7 @@ class Scrapers::Cogedim < Scrapers::BaseScraper
       lot.lot_type = lot_type
       lot.etage = etage
       lot.superficie = superficie
+      lot.size = size
       lot.terrasse_text = terrasse_text
       lot.price_text = price_text
       lot.price = price
@@ -286,6 +287,7 @@ class Scrapers::Cogedim < Scrapers::BaseScraper
       lot.lot_type = lot_type
       lot.etage = etage
       lot.superficie = superficie
+      lot.size = size
       lot.terrasse_text = terrasse_text
       lot.price_text = price_text
       lot.price = price

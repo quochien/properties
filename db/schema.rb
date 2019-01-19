@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_01_16_011530) do
+ActiveRecord::Schema.define(version: 2019_01_19_155642) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -54,6 +54,17 @@ ActiveRecord::Schema.define(version: 2019_01_16_011530) do
     t.string "loyer_ht"
     t.string "price_of_furniture_exclude_vat"
     t.string "total_price_exclude_vat"
+    t.string "gestionnaire"
+    t.string "dureedubail"
+    t.string "logements"
+    t.string "pleine_propriete"
+    t.string "usufruitier"
+    t.string "duree_usufruit_temporaire"
+    t.string "price_without_construction"
+    t.string "additional_price_construction"
+    t.string "parking_price"
+    t.string "cellar_price"
+    t.string "subsidy"
   end
 
   create_table "programmes", force: :cascade do |t|

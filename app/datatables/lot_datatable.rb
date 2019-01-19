@@ -55,13 +55,15 @@ class LotDatatable < BaseDatatable
     end
   end
 
+  private
+
   def get_raw_records
     Lot.all
   end
 
-  private
-
   def display_images(lot)
+    return unless lot.images.present?
+
     html_images = []
     lot.images.split(';').each_with_index do |image, i|
       html_images << "<a style=\"visibility:hidden;\" href=\"#{image}\" data-lightbox=\"lot#{lot.id}\">Image_#{i+1}</a>"

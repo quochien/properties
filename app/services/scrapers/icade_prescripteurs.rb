@@ -22,6 +22,7 @@ class Scrapers::IcadePrescripteurs < Scrapers::BaseScraper
     i = 1
     while true
       result = process_page(session, i)
+      sleep(3)
       break if result == false
       i += 1
     end

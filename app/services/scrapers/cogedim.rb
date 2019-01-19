@@ -27,7 +27,7 @@ class Scrapers::Cogedim < Scrapers::BaseScraper
 
     i = from_page
     while true
-      sleep(5000)
+      sleep(3)
       puts "process page #{i}"
       page = session.get("#{site.url}/recherche/page/#{i}/")
       result = process_page(session, page.body)
@@ -81,11 +81,47 @@ class Scrapers::Cogedim < Scrapers::BaseScraper
     puts "ville: #{ville}"
     puts "postal_code: #{postal_code}"
 
-    fiscalite = doc.xpath("//ul[@class='infos-right']/li[4]/strong").inner_text.strip
-    fiscalite = fiscalite.delete('→').strip
+    dates = doc.xpath("//div[@class='col-md-4 col-lg-3 dates']").inner_html
+    dates =~ /Date d’actabilité.*\n.*b>(.*)<\/b/
+    expected_actability = $1&.strip
+    puts "expected_actability: #{expected_actability}"
+
+    infos = doc.xpath("//ul[@class='infos-right']").inner_html
+
+    infos =~ /LOGEMENTS.*\n.*br>(.*)<\/li/
+    logements = $1&.strip
+    puts "logements: #{logements}"
+
+    infos =~ /pleine propriété.*\n.*br>(.*)<\/li/
+    pleine_propriete = $1&.strip
+    puts "pleine_propriete: #{pleine_propriete}"
+
+    infos =~ /Usufruitier.*\n.*br>(.*)<\/li/
+    usufruitier = $1&.strip
+    puts "usufruitier: #{usufruitier}"
+
+    infos =~ /Usufruit temporaire.*\n.*br>(.*)<\/li/
+    duree_usufruit_temporaire = $1&.strip
+    puts "duree_usufruit_temporaire: #{duree_usufruit_temporaire}"
+
+    infos =~ /ZONE FISCALE.*\n.*br>(.*)<\/li/
+    zone = $1&.strip
+    puts "zone: #{zone}"
+
+    infos =~ /FISCALIT.*\n.*strong>(.*)<\/strong/
+    unless $1
+      infos =~ /ACHAT EN.*\n.*link-purple">(.*)<\/a/
+    end
+    fiscalite = $1&.delete('→')&.strip&.split('/')&.first
     puts "fiscalite: #{fiscalite}"
 
-    zone = doc.xpath("//ul[@class='infos-right']/li[5]").inner_html.split('<br>').last&.strip
+    infos =~ /GESTIONNAIRE.*\n.*br>(.*)<\/li/
+    gestionnaire = $1&.strip
+    puts "gestionnaire: #{gestionnaire}"
+
+    infos =~ /DU BAIL.*\n.*br>(.*)<\/li/
+    dureedubail = $1&.strip
+    puts "dureedubail: #{dureedubail}"
 
     # lots
     # rows = doc.xpath("//table[@class='table table-condensed grille-lots firefox']/tbody/tr[@class='ligne-lot']")
@@ -93,14 +129,19 @@ class Scrapers::Cogedim < Scrapers::BaseScraper
 
     if rows.length > 0
       if rows.first.at_xpath("td[14]").present?
-        parse_lots_new(rows, programme, ville_postal_code, postal_code, ville, fiscalite, zone)
+        has_prix_fonicer = doc.xpath("//tr[@class='head-lot']").inner_text&.include?("Prix Foncier")
+        if has_prix_fonicer
+          parse_lots_fonicer(rows, programme, ville_postal_code, postal_code, ville, fiscalite, zone, logements, pleine_propriete, usufruitier, duree_usufruit_temporaire, gestionnaire, dureedubail, expected_actability)
+        else
+          parse_lots_new(rows, programme, ville_postal_code, postal_code, ville, fiscalite, zone, logements, pleine_propriete, usufruitier, duree_usufruit_temporaire, gestionnaire, dureedubail, expected_actability)
+        end
       else
-        parse_lots(rows, programme, ville_postal_code, postal_code, ville, fiscalite, zone)
+        parse_lots(rows, programme, ville_postal_code, postal_code, ville, fiscalite, zone, logements, pleine_propriete, usufruitier, duree_usufruit_temporaire, gestionnaire, dureedubail, expected_actability)
       end
     end
   end
 
-  def parse_lots(rows, programme, ville_postal_code, postal_code, ville, fiscalite, zone)
+  def parse_lots(rows, programme, ville_postal_code, postal_code, ville, fiscalite, zone, logements, pleine_propriete, usufruitier, duree_usufruit_temporaire, gestionnaire, dureedubail, expected_actability)
     lot_ids = rows.xpath("//tr/@id").map(&:value)
     i = 0
     rows.each do |row|
@@ -119,6 +160,14 @@ class Scrapers::Cogedim < Scrapers::BaseScraper
         lot_source_id: lot_id,
         programme_source_id: programme.source_id
       ).first_or_create
+
+      lot.expected_actability = expected_actability
+      lot.logements = logements
+      lot.pleine_propriete = pleine_propriete
+      lot.usufruitier = usufruitier
+      lot.duree_usufruit_temporaire = duree_usufruit_temporaire
+      lot.gestionnaire = gestionnaire
+      lot.dureedubail = dureedubail
 
       puts "--------------------------"
       puts "lot #{i+1}: id #{lot_id}"
@@ -202,7 +251,7 @@ class Scrapers::Cogedim < Scrapers::BaseScraper
     end
   end
 
-  def parse_lots_new(rows, programme, ville_postal_code, postal_code, ville, fiscalite, zone)
+  def parse_lots_fonicer(rows, programme, ville_postal_code, postal_code, ville, fiscalite, zone, logements, pleine_propriete, usufruitier, duree_usufruit_temporaire, gestionnaire, dureedubail, expected_actability)
     lot_ids = rows.xpath("//tr/@id").map(&:value)
     i = 0
     rows.each do |row|
@@ -217,6 +266,120 @@ class Scrapers::Cogedim < Scrapers::BaseScraper
         lot_source_id: lot_id,
         programme_source_id: programme.source_id
       ).first_or_create
+
+      lot.expected_actability = expected_actability
+      lot.logements = logements
+      lot.pleine_propriete = pleine_propriete
+      lot.usufruitier = usufruitier
+      lot.duree_usufruit_temporaire = duree_usufruit_temporaire
+      lot.gestionnaire = gestionnaire
+      lot.dureedubail = dureedubail
+
+      puts "--------------------------"
+      puts "lot #{i+1}: id #{lot_id}"
+      reference = row.at_xpath("td[1]").inner_text
+      puts "reference: #{reference}"
+      lot_type = row.at_xpath("td[2]").inner_text
+      puts "lot_type: #{lot_type}"
+
+      # floor Rez de chaussée = ground floor = 0
+      etage = row.at_xpath("td[3]").inner_text.split(' ').first.to_i
+      puts "etage: #{etage}"
+
+      # superficie = size
+      superficie = row.at_xpath("td[4]").inner_text
+      puts "superficie: #{superficie}"
+      size = superficie.split(' ').first.sub('.', '').sub(',', '.').to_f
+      puts "size: #{size}"
+
+      terrasse_text = row.at_xpath("td[5]").inner_html
+      puts "terrasse_text: #{terrasse_text}"
+
+      price_without_construction = row.at_xpath("td[6]").inner_text
+      puts "price_without_construction: #{price_without_construction}"
+
+      additional_price_construction = row.at_xpath("td[7]").inner_text
+      puts "additional_price_construction: #{additional_price_construction}"
+
+      parking_price = row.at_xpath("td[8]").inner_text
+      puts "parking_price: #{parking_price}"
+
+      cellar_price = row.at_xpath("td[9]").inner_text
+      puts "cellar_price: #{cellar_price}"
+
+      price_text = row.at_xpath("td[10]").inner_text
+      puts "price_text: #{price_text}"
+      price = price_text.delete('€').delete(' ').to_i
+      puts "price: #{price}"
+
+      subsidy = row.at_xpath("td[11]").inner_text
+      puts "subsidy: #{subsidy}"
+
+      market_rental = row.at_xpath("td[12]").inner_text
+      puts "market_rental: #{market_rental}"
+
+      expected_delivery = row.at_xpath("td[13]").inner_text
+      puts "expected_delivery: #{expected_delivery}"
+
+      puts "disponibilite: #{disponibilite}"
+
+      lot.images = programme.images
+      lot.city_text = ville_postal_code
+      lot.ville = ville
+      lot.postal_code = postal_code
+      lot.department = lot.postal_code.first(2)
+      lot.region = region_for(lot.department)
+      lot.zone = zone
+      lot.fiscalite = fiscalite
+
+      lot.reference = reference
+      lot.lot_type = lot_type
+      lot.etage = etage
+      lot.superficie = superficie
+      lot.size = size
+      lot.terrasse_text = terrasse_text
+      lot.price_text = price_text
+      lot.price = price
+
+      lot.price_without_construction = price_without_construction
+      lot.additional_price_construction = additional_price_construction
+      lot.parking_price = parking_price
+      lot.cellar_price = cellar_price
+      lot.subsidy = subsidy
+
+      lot.expected_delivery = expected_delivery
+      lot.disponibilite = disponibilite ? 'Yes' : 'No'
+      lot.save
+
+      @lots_count += 1
+
+      i += 1
+    end
+  end
+
+  def parse_lots_new(rows, programme, ville_postal_code, postal_code, ville, fiscalite, zone, logements, pleine_propriete, usufruitier, duree_usufruit_temporaire, gestionnaire, dureedubail, expected_actability)
+    lot_ids = rows.xpath("//tr/@id").map(&:value)
+    i = 0
+    rows.each do |row|
+      disponibilite = row.at_xpath("td[14]").inner_html
+      disponibilite = disponibilite.include?('success')
+
+      lot_id = lot_ids[i]
+      # save / update lot
+      lot = Lot.where(
+        site_id: site.id,
+        programme_id: programme.id,
+        lot_source_id: lot_id,
+        programme_source_id: programme.source_id
+      ).first_or_create
+
+      lot.expected_actability = expected_actability
+      lot.logements = logements
+      lot.pleine_propriete = pleine_propriete
+      lot.usufruitier = usufruitier
+      lot.duree_usufruit_temporaire = duree_usufruit_temporaire
+      lot.gestionnaire = gestionnaire
+      lot.dureedubail = dureedubail
 
       puts "--------------------------"
       puts "lot #{i+1}: id #{lot_id}"

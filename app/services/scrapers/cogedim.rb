@@ -112,7 +112,7 @@ class Scrapers::Cogedim < Scrapers::BaseScraper
     unless $1
       infos =~ /ACHAT EN.*\n.*link-purple">(.*)<\/a/
     end
-    fiscalite = $1&.delete('→')&.strip&.split('/')&.first
+    fiscalite = $1&.delete('→')&.strip&.split('/')&.first&.sub('Loi ', '')
     puts "fiscalite: #{fiscalite}"
 
     infos =~ /GESTIONNAIRE.*\n.*br>(.*)<\/li/

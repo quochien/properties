@@ -27,6 +27,7 @@ jQuery(document).ready(function() {
       {"data": "disponibilite"},
       {"data": "notary_fee"},
       {"data": "security_deposit"},
+      {"data": "logements"},
       {"data": "images", "orderable": false, "searchable": false},
       {"data": "actions", visible: false, "orderable": false, "searchable": false},
     ]

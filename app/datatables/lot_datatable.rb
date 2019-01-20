@@ -49,6 +49,7 @@ class LotDatatable < BaseDatatable
         disponibilite: lot.disponibilite,
         notary_fee: lot.notary_fee,
         security_deposit: lot.security_deposit,
+        logements: lot.logements,
         images: display_images(lot),
         actions: "",
       }

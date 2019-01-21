@@ -65,7 +65,7 @@ class LotDatatable < BaseDatatable
         price_without_vat_exclude_furniture: lot.price_without_vat_exclude_furniture,
         loyer_ht: lot.loyer_ht,
         price_of_furniture_exclude_vat: lot.price_of_furniture_exclude_vat,
-        # total_price_exclude_vat: lot.total_price_exclude_vat,
+        total_price_exclude_vat: lot.total_price_exclude_vat&.html_safe,
         # pinel_rental: lot.pinel_rental,
         # pinel_rentabilite: lot.pinel_rentabilite,
         images: display_images(lot),

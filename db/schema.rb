@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_01_19_155642) do
+ActiveRecord::Schema.define(version: 2019_02_09_080333) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -65,6 +65,18 @@ ActiveRecord::Schema.define(version: 2019_01_19_155642) do
     t.string "parking_price"
     t.string "cellar_price"
     t.string "subsidy"
+    t.string "address"
+    t.string "prix_ht"
+    t.string "loyer_pinel"
+    t.string "prix_ht_mobilier"
+    t.string "loyer"
+    t.string "exposition"
+    t.string "vat_rate"
+    t.string "jardin"
+    t.string "balcon"
+    t.string "depot_de_garantie"
+    t.string "frais_de_notaire"
+    t.string "pls"
   end
 
   create_table "programmes", force: :cascade do |t|

@@ -42,7 +42,7 @@ jQuery(document).ready(function() {
       {"data": "market_rental"},
       {"data": "price_without_vat_exclude_furniture"},
       {"data": "loyer_ht"},
-      {"data": "price_of_furniture_exclude_vat"},
+      {"data": "prix_ht_mobilier"},
       // {"data": "total_price_exclude_vat"},
       // {"data": "pinel_rental"},
       // {"data": "pinel_rentabilite"},

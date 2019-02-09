@@ -20,6 +20,16 @@ sites = [
     site_name: 'cogedim',
     url: 'https://altareacogedim-partenaires.com',
     logo: 'logo_cogedim.jpg'
+  },
+  {
+    site_name: 'catellapatrimoine',
+    url: 'http://www.catellapatrimoine.fr',
+    logo: 'logo_catellapatrimoine.jpg'
+  },
+  {
+    site_name: 'vinci',
+    url: 'https://www.vinci-immobilier-patrimoine.com',
+    logo: 'logo_vinci.png'
   }
 ]
 sites.each do |record|

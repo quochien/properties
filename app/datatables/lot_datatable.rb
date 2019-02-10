@@ -31,7 +31,7 @@ class LotDatatable < BaseDatatable
       {
         id: lot.id,
         logo: image_tag(lot.site.logo, width: 40, height: 30).html_safe,
-        reference: "n° #{lot.reference}".html_safe,
+        reference: link_to("n° #{lot.reference}".html_safe, lot_path(lot), target: '_blank'),
         lot_type: lot.lot_type,
         size: "#{lot.size} m2",
         etage: lot.etage == 1 ? "1 er" : "#{lot.etage} ème",

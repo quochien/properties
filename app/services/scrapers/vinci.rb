@@ -26,8 +26,8 @@ class Scrapers::Vinci < Scrapers::BaseScraper
       break if result == false
       i += 1
 
-      # Test page 1
-      break
+      # Test 1 page
+      # break
       # -----------
     end
 

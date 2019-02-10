@@ -1,0 +1,14 @@
+<h1>Lot <%= params[:id] %></h1>
+<% except_keys = %W[id site_id programme_id lot_source_id programme_source_id images] %>
+
+<div class="col-md-3">
+  <label>Site</label>
+  <%= image_tag(@lot.site.logo, width: 40, height: 30).html_safe %>
+</div>
+<% @lot.attributes.each do |key, value| %>
+  <% next if except_keys.include? key %>
+  <div class="col-md-3">
+    <label><%= key %></label>
+    <%= value.try(:html_safe) || value %>
+  </div>
+<% end %>

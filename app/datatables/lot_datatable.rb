@@ -30,7 +30,7 @@ class LotDatatable < BaseDatatable
     records.includes(:site).map do |lot|
       {
         id: lot.id,
-        logo: image_tag(lot.site.logo, width: 40, height: 30).html_safe,
+        logo: image_tag(lot.site.logo, height: 50).html_safe,
         reference: link_to("n° #{lot.reference}".html_safe, lot_path(lot), target: '_blank'),
         lot_type: lot.lot_type,
         size: "#{lot.size} m2",
@@ -85,8 +85,8 @@ class LotDatatable < BaseDatatable
 
     html_images = []
     lot.images.split(';').each_with_index do |image, i|
-      html_images << "<a style=\"visibility:hidden;\" href=\"#{image}\" data-lightbox=\"lot#{lot.id}\">Image_#{i+1}</a>"
+      html_images << "<a style=\"visibility:hidden;height:0px;\" href=\"#{image}\" data-lightbox=\"lot#{lot.id}\">Image_#{i+1}</a>"
     end
-    html_images.join(" ").html_safe
+    html_images.join("").html_safe
   end
 end

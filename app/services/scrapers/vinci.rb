@@ -1,4 +1,21 @@
 class Scrapers::Vinci < Scrapers::BaseScraper
+  LOT_TYPES = {
+    "4P" => "4 pièces",
+    "3P" => "3 pièces",
+    "2P" => "2 pièces",
+    "1P" => "Studio",
+    "5P" => "5 pièces",
+    "3P/4P" => "3 pièces",
+    "4P duplex" => "4 pièces duplex",
+    "3P duplex" => "3 pièces duplex",
+    "4P/5P" => "4 pièces",
+    "Maison 3P" => "Maison 3 pièces",
+    "1P bis" => "Studio",
+    "Maison 5P" => "Maison 5 pièces",
+    "5P duplex" => "5 pièces duplex",
+    "Maison 4P" => "Maison 4 pièces",
+    "6P duplex" => "6 pièces duplex"
+  }
   def initialize
     @programme_ids = {}
     @lots_count = 0
@@ -97,13 +114,17 @@ class Scrapers::Vinci < Scrapers::BaseScraper
     puts "reference: #{reference}"
     lot.reference = reference
 
-    type = row.at_xpath("td[3]").inner_text
+    type = row.at_xpath("td[3]").inner_text&.strip
     puts "type: #{type}"
-    lot.lot_type = type
+    lot.lot_type = LOT_TYPES[type] || type
 
     superficie = row.at_xpath("td[4]").inner_text
     puts "superficie: #{superficie}"
     lot.superficie = superficie
+
+    size = superficie.to_f
+    puts "size: #{size}"
+    lot.size = size
 
     price_text = row.at_xpath("td[5]").inner_text
     puts "price_text: #{price_text}"

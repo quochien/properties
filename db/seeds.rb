@@ -14,7 +14,7 @@ sites = [
   {
     site_name: 'valorissimo',
     url: 'https://www.valorissimo.com',
-    logo: ''
+    logo: 'logo_valorissimo.png'
   },
   {
     site_name: 'cogedim',

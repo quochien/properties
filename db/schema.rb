@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_02_09_080333) do
+ActiveRecord::Schema.define(version: 2019_02_20_161035) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -77,6 +77,7 @@ ActiveRecord::Schema.define(version: 2019_02_09_080333) do
     t.string "depot_de_garantie"
     t.string "frais_de_notaire"
     t.string "pls"
+    t.string "offre_speciale"
   end
 
   create_table "programmes", force: :cascade do |t|

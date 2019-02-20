@@ -15,7 +15,8 @@ class Scrapers::Vinci < Scrapers::BaseScraper
     "5P duplex" => "5 pièces duplex",
     "Maison 4P" => "Maison 4 pièces",
     "6P duplex" => "6 pièces duplex"
-  }
+  }.freeze
+
   def initialize
     @programme_ids = {}
     @lots_count = 0

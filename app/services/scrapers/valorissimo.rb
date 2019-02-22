@@ -1,4 +1,12 @@
 class Scrapers::Valorissimo < Scrapers::BaseScraper
+  LOT_TYPES = {
+    "4p" => "4 pièces",
+    "3p" => "3 pièces",
+    "2p" => "2 pièces",
+    "1p" => "Studio",
+    "5p" => "5 pièces",
+  }.freeze
+
   def initialize
     @programme_ids = {}
     @lots_count = 0
@@ -115,7 +123,7 @@ class Scrapers::Valorissimo < Scrapers::BaseScraper
     puts "col4: #{col4}"
     type = col4.split('/')[0]&.strip
     puts "type: #{type}"
-    lot.lot_type = type
+    lot.lot_type = LOT_TYPES[type] || type
 
     superficie = col4.split('/')[1]&.strip.to_s.sub('m²', '').strip.gsub('.', '').gsub(',', '.')
     puts "superficie: #{superficie}"

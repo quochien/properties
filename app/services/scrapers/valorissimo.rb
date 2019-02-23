@@ -5,6 +5,7 @@ class Scrapers::Valorissimo < Scrapers::BaseScraper
     "2p" => "2 pièces",
     "1p" => "Studio",
     "5p" => "5 pièces",
+    "6p" => "6 pièces",
   }.freeze
 
   def initialize
@@ -34,11 +35,12 @@ class Scrapers::Valorissimo < Scrapers::BaseScraper
       puts page_url
 
       page = session.get(page_url)
-      result = process_page(session, page.body)
+      result = process_page(session, page.body, i)
 
       # Test 1 page
       # break
       # -----------
+      puts "--------------------------"
     end
 
     puts "Processed: #{@lots_count} lots"
@@ -48,7 +50,7 @@ class Scrapers::Valorissimo < Scrapers::BaseScraper
 
   private
 
-  def process_page(session, body)
+  def process_page(session, body, page_no)
     doc = Nokogiri::HTML(body)
     rows = doc.xpath("//table/tr")
     puts rows.length
@@ -56,7 +58,7 @@ class Scrapers::Valorissimo < Scrapers::BaseScraper
     i = 1
     rows.drop(1).collect do |row|
       puts "--------------------------"
-      puts "lot #{i}"
+      puts "page #{page_no}: lot #{i}"
 
       lot_link = row.at_xpath("td[1]/a[1]/@href").value
       puts "lot_link: #{lot_link}"
@@ -99,6 +101,48 @@ class Scrapers::Valorissimo < Scrapers::BaseScraper
     zone = doc.at_xpath("//div[@class='offreDetail']/ul[1]/li[1]/dl[1]/dt[2]")&.inner_text.to_s.strip.split(' ').last
     puts "zone: #{zone}"
     lot.zone = zone
+
+    logement = doc.at_xpath("//div[@id='tabs-1']/div[1]/h4[1]").inner_text
+    logement = logement.to_s.split(' ')[0]
+    puts "logement: #{logement}"
+    lot.logements = logement
+
+    table_html = doc.at_xpath("//table[@class='tableAjout']").inner_html.delete("\n")
+
+    table_html =~ /Parking \/ Cave.*?<td>(.*?)<br>/
+    parking_text = $1
+    puts "parking_text: #{parking_text}"
+    lot.parking_text = parking_text
+
+    table_html =~ /Loyer plafond Pinel.*?<td>(.*?)<\/td>/
+    loyer_pinel = $1
+    puts "loyer_pinel: #{loyer_pinel}"
+    lot.loyer_pinel = loyer_pinel
+
+    table_html =~ /Terrasse.*?<td>(.*?)<\/td>/
+    terrasse_text = $1
+    puts "terrasse_text:#{terrasse_text}"
+    lot.terrasse_text = terrasse_text
+
+    table_html =~ /Balcon.*?<td>(.*?)<\/td>/
+    balcon = $1
+    puts "balcon: #{balcon}"
+    lot.balcon = balcon
+
+    table_html =~ /Prix TTC.*?<td>(.*?)<\/td>/
+    price_ttc = $1
+    puts "price_ttc: #{price_ttc}"
+    lot.price_ttc = price_ttc
+
+    table_html =~ /Prix foncier.*?<td>(.*?)<\/td>/
+    price_foncier = $1
+    puts "price_foncier: #{price_foncier}"
+    lot.price_foncier = price_foncier
+
+    table_html =~ /Prix mobilier HT.*?<td>(.*?)<\/td>/
+    prix_ht_mobilier = $1
+    puts "prix_ht_mobilier: #{prix_ht_mobilier}"
+    lot.prix_ht_mobilier = prix_ht_mobilier
   end
 
   def get_lot_row(lot, row)
@@ -121,7 +165,7 @@ class Scrapers::Valorissimo < Scrapers::BaseScraper
 
     col4 = row.at_xpath("td[4]/a[1]").inner_text
     puts "col4: #{col4}"
-    type = col4.split('/')[0]&.strip
+    type = col4.split('/')[0].strip.delete(' ')
     puts "type: #{type}"
     lot.lot_type = LOT_TYPES[type] || type
 

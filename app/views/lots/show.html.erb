@@ -3,7 +3,7 @@
 
 <div class="col-md-3">
   <label>Site</label>
-  <%= image_tag(@lot.site.logo, width: 40, height: 30).html_safe %>
+  <%= image_tag(@lot.site.logo, height: 50).html_safe %>
 </div>
 <% @lot.attributes.each do |key, value| %>
   <% next if except_keys.include? key %>

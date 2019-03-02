@@ -1,24 +1,34 @@
-# README
+# Setup
+Ruby version: 2.4.1
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+```
+bundle install
 
-Things you may want to cover:
+rails db:migrate
 
-* Ruby version
+rails db:seed
 
-* System dependencies
+rails server
+```
 
-* Configuration
+# Scrapers
 
-* Database creation
+## Cogedim
 
-* Database initialization
+`Scrapers::Cogedim.new.perform`
 
-* How to run the test suite
+## IcadePrescripteurs
 
-* Services (job queues, cache servers, search engines, etc.)
+`Scrapers::IcadePrescripteurs.new.perform`
 
-* Deployment instructions
+## Valorissimo
 
-* ...
+`Scrapers::Valorissimo.new.perform`
+
+## Vinci
+
+`Scrapers::Vinci.new.perform`
+
+# Website
+
+Access `http://localhost:3000` to show the lots page

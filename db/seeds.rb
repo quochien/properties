@@ -30,7 +30,12 @@ sites = [
     site_name: 'vinci',
     url: 'https://www.vinci-immobilier-patrimoine.com',
     logo: 'logo_vinci.png'
-  }
+  },
+  {
+    site_name: 'nexity',
+    url: 'https://monbookimmo.fr',
+    logo: 'logo_nexity.png'
+  },
 ]
 sites.each do |record|
   if site = Site.find_by(site_name: record[:site_name])

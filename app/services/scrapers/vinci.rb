@@ -27,6 +27,8 @@ class Scrapers::Vinci < Scrapers::BaseScraper
   end
 
   def perform(from_page=0)
+    Lot.where(site_id: site.id).update_all(enabled: false)
+
     puts "start scraping #{site.url}"
     session = Mechanize.new
 

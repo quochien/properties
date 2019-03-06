@@ -18,6 +18,8 @@ class Scrapers::Valorissimo < Scrapers::BaseScraper
   end
 
   def perform(from_page=1)
+    Lot.where(site_id: site.id).update_all(enabled: false) if from_page == 1
+
     puts "start scraping #{site.url}"
     session = Mechanize.new
 

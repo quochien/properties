@@ -75,6 +75,7 @@ class Scrapers::Vinci < Scrapers::BaseScraper
       puts "lot_source_id: #{lot_source_id}"
 
       lot = Lot.where(site_id: site.id, lot_source_id: lot_source_id).first_or_create
+      lot.enabled = true
       get_lot_row(lot, row)
 
       # go to lot link
@@ -157,6 +158,8 @@ class Scrapers::Vinci < Scrapers::BaseScraper
   end
 
   def process_lot_link(lot, session, lot_link)
+    lot.lot_link = lot_link
+
     page = session.get(lot_link)
     doc = Nokogiri::HTML(page.body)
 

@@ -9,6 +9,8 @@ class Scrapers::IcadePrescripteurs < Scrapers::BaseScraper
   end
 
   def perform
+    Lot.where(site_id: site.id).update_all(enabled: false)
+
     puts "start scraping #{site.url}"
     session = Mechanize.new
 
@@ -77,6 +79,7 @@ class Scrapers::IcadePrescripteurs < Scrapers::BaseScraper
 
       lot = process_lot(session, lot_link)
 
+      lot.lot_link = lot_link
       lot.lot_name = lot_name
       lot.reference = lot_name.split(' ').last
       first_word = lot_name.split(' ').first
@@ -151,6 +154,8 @@ class Scrapers::IcadePrescripteurs < Scrapers::BaseScraper
       lot_source_id: lot_id,
       programme_source_id: programme_id
     ).first_or_create
+
+    lot.enabled = true
     lot.terrasse_text = terrasse_text
     lot.parking_text = parking_text
     lot.images = programme.images

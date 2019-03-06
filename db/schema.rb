@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_02_23_051202) do
+ActiveRecord::Schema.define(version: 2019_03_06_143308) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -80,6 +80,8 @@ ActiveRecord::Schema.define(version: 2019_02_23_051202) do
     t.string "offre_speciale"
     t.string "price_ttc"
     t.string "price_foncier"
+    t.string "lot_link"
+    t.boolean "enabled", default: true
   end
 
   create_table "programmes", force: :cascade do |t|
@@ -89,6 +91,7 @@ ActiveRecord::Schema.define(version: 2019_02_23_051202) do
     t.datetime "updated_at", null: false
     t.string "source_id"
     t.integer "site_id"
+    t.string "url"
   end
 
   create_table "sites", force: :cascade do |t|

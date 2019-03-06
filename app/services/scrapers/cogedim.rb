@@ -9,6 +9,8 @@ class Scrapers::Cogedim < Scrapers::BaseScraper
   end
 
   def perform(from_page = 2)
+    Lot.where(site_id: site.id).update_all(enabled: false) if from_page == 2
+
     puts "start scraping #{site.url}"
     session = Mechanize.new
 
@@ -71,6 +73,7 @@ class Scrapers::Cogedim < Scrapers::BaseScraper
     programme = Programme.where(
       source_id: programme_id, site_id: site.id
     ).first_or_create
+    programme.url = link
     programme.images = images.join(';')
     programme.save
 
@@ -161,6 +164,7 @@ class Scrapers::Cogedim < Scrapers::BaseScraper
         programme_source_id: programme.source_id
       ).first_or_create
 
+      lot.enabled = true
       lot.expected_actability = expected_actability
       lot.logements = logements
       lot.pleine_propriete = pleine_propriete
@@ -267,6 +271,7 @@ class Scrapers::Cogedim < Scrapers::BaseScraper
         programme_source_id: programme.source_id
       ).first_or_create
 
+      lot.enabled = true
       lot.expected_actability = expected_actability
       lot.logements = logements
       lot.pleine_propriete = pleine_propriete
@@ -373,6 +378,7 @@ class Scrapers::Cogedim < Scrapers::BaseScraper
         programme_source_id: programme.source_id
       ).first_or_create
 
+      lot.enabled = true
       lot.expected_actability = expected_actability
       lot.logements = logements
       lot.pleine_propriete = pleine_propriete

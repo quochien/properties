@@ -77,7 +77,7 @@ class LotDatatable < BaseDatatable
   private
 
   def get_raw_records
-    Lot.all
+    Lot.active.all
   end
 
   def display_images(lot)
